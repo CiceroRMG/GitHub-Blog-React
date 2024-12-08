@@ -41,6 +41,7 @@ export function Home() {
     const issuesInfosFiltred = issuesInfos.map((issue: any) => {
       return {
         id: issue.id,
+        number: issue.number,
         title: issue.title,
         postedAt: issue.createdAt,
         description: issue.body,
@@ -81,7 +82,7 @@ export function Home() {
           {issues.map((issue) => {
             return (
               <NavLink
-                to={`/post?id=${issue.id}`}
+                to={`/post?id=${issue.number}`}
                 key={issue.id}
                 className={'postLink'}
               >

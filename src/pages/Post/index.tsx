@@ -14,9 +14,31 @@ import {
   TagsPostInfos,
   TitleAndTagsContent,
 } from './styles'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { api } from '../../lib/axios'
 
 export function Post() {
+  const [issue, setIssue] = useState({})
+
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const id = queryParams.get('id')
+
+  async function loadIssue(id: string | null) {
+    const issueReq = await api.get('/search/issues', {
+      params: {
+        q: `https://api.github.com/repos/rocketseat-education/reactjs-github-blog-challenge/issues/${id}`,
+      },
+    })
+
+    setIssue(issueReq.data)
+  }
+
+  useEffect(() => {
+    loadIssue(id)
+  }, [id])
+
   return (
     <PostContainer>
       <PostInfoContainer>

@@ -2,6 +2,7 @@ import { resumetText } from '../../../../utils/resumeDescription'
 import { PostCardContainer } from './styles'
 export interface PostCardProps {
   id?: number
+  number?: number
   title: string
   postedAt: string
   description: string
