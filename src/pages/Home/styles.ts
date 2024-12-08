@@ -18,6 +18,19 @@ export const MainContainer = styled.div`
     flex-wrap: wrap;
 
     margin-bottom: 6rem;
+
+    .postLink {
+      text-decoration: none;
+
+      p {
+        text-align: justify;
+        color: ${(props) => props.theme['base-text']};
+
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 160%;
+      }
+    }
   }
 `
 

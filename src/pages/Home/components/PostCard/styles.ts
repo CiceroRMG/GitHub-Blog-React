@@ -10,6 +10,7 @@ export const PostCardContainer = styled.li`
   background: ${(props) => props.theme['base-post']};
 
   width: 26rem;
+  height: 16.5rem;
   padding: 2rem;
 
   transition:
@@ -38,7 +39,7 @@ export const PostCardContainer = styled.li`
   }
 
   p {
-    text-align: justify;
+    text-align: start;
   }
 
   &:hover {

@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useState } from 'react'
+import { api } from '../../lib/axios'
 import { PostCard, PostCardProps } from './components/PostCard'
 import { Profile, ProfileProps } from './components/Profile'
 import {
@@ -6,28 +8,62 @@ import {
   SearchContent,
   SearchPostsInput,
 } from './styles'
-
-const profileTest: ProfileProps = {
-  avatarUrl: 'https://github.com/ciceroRMG.png',
-  name: 'Cícero Gomes',
-  linkUrl: 'https://github.com/ciceroRMG',
-  description: 'Programador full stack',
-  profileName: 'ciceroRMG',
-  work: 'LabTIC',
-  followers: '203',
-}
-
-const cardTeste: PostCardProps = {
-  title: 'JavaScript data types and data structures',
-  postedAt: '3',
-  description:
-    'Programming languages all have built-in data structures, but these often differ from one language to another. This article attempts to list the built-in data structures available in JavaScript and what properties they have. These can be used to build other data structures. Wherever possible, comparisons with other languages are drawn',
-}
+import { NavLink } from 'react-router-dom'
 
 export function Home() {
+  const [user, setUser] = useState<ProfileProps>({} as ProfileProps)
+  const [issues, setIssues] = useState<PostCardProps[]>([] as PostCardProps[])
+
+  const loadUser = useCallback(async () => {
+    const userData = await api.get('/users/barney')
+
+    const userInfos = {
+      avatarUrl: userData.data.html_url + '.png',
+      name: userData.data.name,
+      linkUrl: userData.data.html_url,
+      description: userData.data.bio,
+      profileName: userData.data.login,
+      work: userData.data.company,
+      followers: userData.data.followers,
+    }
+
+    setUser(userInfos)
+  }, [])
+
+  const loadIssues = useCallback(async (query?: string) => {
+    const issuestest = await api.get('/search/issues', {
+      params: {
+        q: `${query || ''}%20repo:rocketseat-education/reactjs-github-blog-challenge`,
+      },
+    })
+    const issuesInfos = issuestest.data.items
+
+    const issuesInfosFiltred = issuesInfos.map((issue: any) => {
+      return {
+        id: issue.id,
+        title: issue.title,
+        postedAt: issue.createdAt,
+        description: issue.body,
+      }
+    })
+
+    setIssues(issuesInfosFiltred)
+  }, [])
+
+  useEffect(() => {
+    loadUser()
+    loadIssues()
+  }, [loadUser, loadIssues])
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'Enter') {
+      loadIssues(event.currentTarget.value)
+    }
+  }
+
   return (
     <HomeContainer>
-      <Profile {...profileTest} />
+      <Profile {...user} />
 
       <MainContainer>
         <SearchContent>
@@ -36,12 +72,23 @@ export function Home() {
             <span>6 publicações</span>
           </div>
 
-          <SearchPostsInput placeholder="Buscar Conteúdo" />
+          <SearchPostsInput
+            placeholder="Buscar Conteúdo"
+            onKeyDown={handleKeyDown}
+          />
         </SearchContent>
         <ul className="postCardList">
-          <PostCard {...cardTeste} />
-          <PostCard {...cardTeste} />
-          <PostCard {...cardTeste} />
+          {issues.map((issue) => {
+            return (
+              <NavLink
+                to={`/post?id=${issue.id}`}
+                key={issue.id}
+                className={'postLink'}
+              >
+                <PostCard {...issue} />
+              </NavLink>
+            )
+          })}
         </ul>
       </MainContainer>
     </HomeContainer>
