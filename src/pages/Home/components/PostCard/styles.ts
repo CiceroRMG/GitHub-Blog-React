@@ -44,6 +44,6 @@ export const PostCardContainer = styled.li`
   &:hover {
     border: 2px solid ${(props) => props.theme['base-label']};
     cursor: pointer;
-    transform: scale(1.03);
+    transform: scale(1.02);
   }
 `
