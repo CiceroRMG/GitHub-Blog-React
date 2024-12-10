@@ -47,13 +47,14 @@ export function IssuesProvider({ children }: IssuesProviderProps) {
         id: issue.id,
         number: issue.number,
         title: issue.title,
-        postedAt: issue.createdAt,
+        postedAt: issue.created_at,
         description: issue.body,
         userOwner: issue.user.login,
         commentsQuantity: issue.comments,
         url: issue.html_url,
       }
     })
+    console.log(issuesInfosFiltred)
 
     setIssues(issuesInfosFiltred)
   }, [])

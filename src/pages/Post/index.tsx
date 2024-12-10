@@ -18,6 +18,8 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { useIssuesContext } from '../../contexts/IssuesContext'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
 export function Post() {
   const { issues } = useIssuesContext()
@@ -35,6 +37,11 @@ export function Post() {
   }
 
   const selectedIssue = getIssueById()
+
+  const publishTime = formatDistanceToNow(new Date(selectedIssue.postedAt), {
+    addSuffix: true,
+    locale: ptBR,
+  })
 
   return (
     <PostContainer>
@@ -61,7 +68,7 @@ export function Post() {
             </div>
             <div className="tagContent">
               <FontAwesomeIcon icon={faCalendarDay} />
-              <span>Há 1 dia</span>
+              <span>{publishTime}</span>
             </div>
             <div className="tagContent">
               <FontAwesomeIcon icon={faComment} />

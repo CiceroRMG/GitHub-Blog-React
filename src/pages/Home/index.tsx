@@ -16,7 +16,7 @@ export function Home() {
   const { issues, issueQuery } = useIssuesContext()
 
   const loadUser = useCallback(async () => {
-    const userData = await api.get('/users/barney')
+    const userData = await api.get('/users/ciceroRMG')
 
     const userInfos = {
       avatarUrl: userData.data.html_url + '.png',

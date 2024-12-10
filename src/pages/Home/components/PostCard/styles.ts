@@ -40,6 +40,7 @@ export const PostCardContainer = styled.li`
 
   p {
     text-align: start;
+    word-wrap: break-word;
   }
 
   &:hover {
