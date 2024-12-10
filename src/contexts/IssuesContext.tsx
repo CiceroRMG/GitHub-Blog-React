@@ -40,7 +40,6 @@ export function IssuesProvider({ children }: IssuesProviderProps) {
       },
     })
     const issuesInfos = issuestest.data.items
-    console.log(issuesInfos)
 
     const issuesInfosFiltred = issuesInfos.map((issue: any) => {
       return {
@@ -54,7 +53,6 @@ export function IssuesProvider({ children }: IssuesProviderProps) {
         url: issue.html_url,
       }
     })
-    console.log(issuesInfosFiltred)
 
     setIssues(issuesInfosFiltred)
   }, [])
