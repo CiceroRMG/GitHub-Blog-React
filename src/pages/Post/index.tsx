@@ -15,29 +15,26 @@ import {
   TitleAndTagsContent,
 } from './styles'
 import { NavLink, useLocation } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { api } from '../../lib/axios'
+import { useIssuesContext } from '../../contexts/IssuesContext'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 export function Post() {
-  const [issue, setIssue] = useState({})
+  const { issues } = useIssuesContext()
 
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
-  const id = queryParams.get('id')
+  const id = Number(queryParams.get('id'))
 
-  async function loadIssue(id: string | null) {
-    const issueReq = await api.get('/search/issues', {
-      params: {
-        q: `https://api.github.com/repos/rocketseat-education/reactjs-github-blog-challenge/issues/${id}`,
-      },
+  const getIssueById = () => {
+    const issue = issues.filter((issue) => {
+      return issue.id === id
     })
 
-    setIssue(issueReq.data)
+    return issue[0]
   }
 
-  useEffect(() => {
-    loadIssue(id)
-  }, [id])
+  const selectedIssue = getIssueById()
 
   return (
     <PostContainer>
@@ -47,17 +44,20 @@ export function Post() {
             <FontAwesomeIcon icon={faChevronLeft} />
             <span>Voltar</span>
           </NavLink>
-          <a href="" className="linkToGithub">
+          <a
+            href={selectedIssue.url ? selectedIssue.url : ''}
+            className="linkToGithub"
+          >
             <span>Ver no github </span>
             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
           </a>
         </HeadContent>
         <TitleAndTagsContent>
-          <h1>JavaScript data types and data structures</h1>
+          <h1>{selectedIssue.title}</h1>
           <TagsPostInfos>
             <div className="tagContent">
               <FontAwesomeIcon icon={faGithub} />
-              <span>nome</span>
+              <span>{selectedIssue.userOwner}</span>
             </div>
             <div className="tagContent">
               <FontAwesomeIcon icon={faCalendarDay} />
@@ -65,22 +65,16 @@ export function Post() {
             </div>
             <div className="tagContent">
               <FontAwesomeIcon icon={faComment} />
-              <span>5 comentários</span>
+              <span>{selectedIssue.commentsQuantity} comentários</span>
             </div>
           </TagsPostInfos>
         </TitleAndTagsContent>
       </PostInfoContainer>
       <PostDescriptionContainer>
         <section>
-          Programming languages all have built-in data structures, but these
-          often differ from one language to another. This article attempts to
-          list the built-in data structures available in JavaScript and what
-          properties they have. These can be used to build other data
-          structures. Wherever possible, comparisons with other languages are
-          drawn. Dynamic typing JavaScript is a loosely typed and dynamic
-          language. Variables in JavaScript are not directly associated with any
-          particular value type, and any variable can be assigned (and
-          re-assigned) values of all types:
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {selectedIssue.description}
+          </ReactMarkdown>
         </section>
       </PostDescriptionContainer>
     </PostContainer>

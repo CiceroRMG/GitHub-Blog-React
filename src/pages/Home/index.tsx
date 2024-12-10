@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '../../lib/axios'
-import { PostCard, PostCardProps } from './components/PostCard'
+import { PostCard } from './components/PostCard'
 import { Profile, ProfileProps } from './components/Profile'
 import {
   HomeContainer,
@@ -9,10 +9,11 @@ import {
   SearchPostsInput,
 } from './styles'
 import { NavLink } from 'react-router-dom'
+import { useIssuesContext } from '../../contexts/IssuesContext'
 
 export function Home() {
   const [user, setUser] = useState<ProfileProps>({} as ProfileProps)
-  const [issues, setIssues] = useState<PostCardProps[]>([] as PostCardProps[])
+  const { issues, issueQuery } = useIssuesContext()
 
   const loadUser = useCallback(async () => {
     const userData = await api.get('/users/barney')
@@ -30,35 +31,13 @@ export function Home() {
     setUser(userInfos)
   }, [])
 
-  const loadIssues = useCallback(async (query?: string) => {
-    const issuestest = await api.get('/search/issues', {
-      params: {
-        q: `${query || ''}%20repo:rocketseat-education/reactjs-github-blog-challenge`,
-      },
-    })
-    const issuesInfos = issuestest.data.items
-
-    const issuesInfosFiltred = issuesInfos.map((issue: any) => {
-      return {
-        id: issue.id,
-        number: issue.number,
-        title: issue.title,
-        postedAt: issue.createdAt,
-        description: issue.body,
-      }
-    })
-
-    setIssues(issuesInfosFiltred)
-  }, [])
-
   useEffect(() => {
     loadUser()
-    loadIssues()
-  }, [loadUser, loadIssues])
+  }, [loadUser])
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === 'Enter') {
-      loadIssues(event.currentTarget.value)
+      issueQuery(event.currentTarget.value)
     }
   }
 
@@ -82,7 +61,7 @@ export function Home() {
           {issues.map((issue) => {
             return (
               <NavLink
-                to={`/post?id=${issue.number}`}
+                to={`/post?id=${issue.id}`}
                 key={issue.id}
                 className={'postLink'}
               >
